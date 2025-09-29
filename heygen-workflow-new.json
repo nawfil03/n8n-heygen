@@ -1,0 +1,300 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        860,
+        -200
+      ],
+      "id": "29276296-2a27-4f39-a40f-05acf9e16b78",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        840,
+        0
+      ],
+      "id": "363cbee6-ed9e-4962-9bde-5a014a1e7610",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "YKD4WtYRjv5W7bw7",
+          "name": "openai(ram sir)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "244f405b-b775-4521-a50c-164e8d6fb17c",
+        "responseMode": "responseNode",
+        "options": {
+          "binaryPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        40,
+        -200
+      ],
+      "id": "f75125da-0684-4b28-a454-8032abfe051c",
+      "name": "Webhook",
+      "webhookId": "244f405b-b775-4521-a50c-164e8d6fb17c"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ Object.keys($json).includes('voice') || Object.keys($json).includes('audio') || ($binary && Object.keys($binary).length > 0) }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equals"
+                    },
+                    "id": "101cc34e-3260-4b81-a53e-a92446735984"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "voice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c58acdcd-40f6-4763-a76d-7e2afdbf9fc6",
+                    "leftValue": "={{ Object.keys($json).includes('message') || Object.keys($json).includes('text') }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        260,
+        -200
+      ],
+      "id": "d887f9ba-8404-412c-9190-dbf9500af648",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        500,
+        -320
+      ],
+      "id": "09d2f80a-78e4-44f3-bccc-e44b12146556",
+      "name": "OpenAI Whisper",
+      "credentials": {
+        "openAiApi": {
+          "id": "YKD4WtYRjv5W7bw7",
+          "name": "openai(ram sir)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sessionId || 'default-session' }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        840,
+        180
+      ],
+      "id": "838437f7-c7ec-4003-938f-7cb1aeace7e9",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"response\": $json.output || $json.text, \"sessionId\": $json.sessionId || 'default-session' } }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1300,
+        -200
+      ],
+      "id": "d75459c6-46fb-4a46-8543-4ba564138e5e",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        680,
+        -200
+      ],
+      "id": "c7cc0d9f-6f04-48c6-afc9-e6bdc3df71b9",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle voice transcription or direct text input\nconst item = $input.first();\n\n// If this is transcribed audio, format for AI Agent\nif (item.json.text && !item.json.message) {\n  return {\n    json: {\n      chatInput: item.json.text,\n      sessionId: item.json.sessionId || 'default-session',\n      inputType: 'voice'\n    }\n  };\n}\n\n// If this is direct text input, format for AI Agent  \nif (item.json.message) {\n  return {\n    json: {\n      chatInput: item.json.message,\n      sessionId: item.json.sessionId || 'default-session', \n      inputType: 'text'\n    }\n  };\n}\n\n// Fallback\nreturn {\n  json: {\n    chatInput: item.json.text || item.json.message || 'No input detected',\n    sessionId: item.json.sessionId || 'default-session',\n    inputType: 'unknown'\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        -80
+      ],
+      "id": "854f8c29-b875-47e7-80f1-d477f2dd1562",
+      "name": "Format Input"
+    }
+  ],
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "OpenAI Whisper",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Whisper": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Input": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "aee285e862d73f094085d9e77e030ac7335765ff95695ccc37d826237f205f75"
+  }
+}
