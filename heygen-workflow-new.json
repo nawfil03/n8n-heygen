@@ -165,7 +165,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        1300,
+        1560,
         -200
       ],
       "id": "d75459c6-46fb-4a46-8543-4ba564138e5e",
@@ -194,6 +194,19 @@
       ],
       "id": "854f8c29-b875-47e7-80f1-d477f2dd1562",
       "name": "Format Input"
+    },
+    {
+      "parameters": {
+        "jsCode": "const words = $json.response?.split(' ')||[];\nconst truncated = words.slice(0,50).join(' ');\nreturn { json:{ response:truncated, sessionId:$json.sessionId } };\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1220,
+        -200
+      ],
+      "id": "b177e408-938b-4638-b081-7a7ddc26658f",
+      "name": "Code"
     }
   ],
   "connections": {
@@ -201,7 +214,7 @@
       "main": [
         [
           {
-            "node": "Respond to Webhook",
+            "node": "Code",
             "type": "main",
             "index": 0
           }
@@ -288,6 +301,17 @@
             "node": "Merge",
             "type": "main",
             "index": 1
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
