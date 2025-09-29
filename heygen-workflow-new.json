@@ -4,313 +4,535 @@
       "parameters": {
         "options": {}
       },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 2,
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
       "position": [
-        860,
-        -200
+        -520,
+        1580
       ],
-      "id": "29276296-2a27-4f39-a40f-05acf9e16b78",
-      "name": "AI Agent"
+      "id": "78dcd0e0-4a56-47b4-9f4b-d9b9a1f7d822",
+      "name": "When chat message received",
+      "webhookId": "4064094d-b4cd-4732-b2c9-b86828f9d7d4"
     },
     {
       "parameters": {
-        "model": {
-          "__rl": true,
-          "mode": "list",
-          "value": "gpt-4.1-mini"
-        },
+        "content": "## Calendly Integration Tools",
+        "height": 340,
+        "width": 360,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        920,
+        1880
+      ],
+      "id": "db0d266f-853a-4159-a452-04bfc2dfe4e3",
+      "name": "Calendly Tools Note"
+    },
+    {
+      "parameters": {
+        "model": "mistral-small-2506",
         "options": {}
       },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.2,
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
       "position": [
-        840,
-        0
+        560,
+        1620
       ],
-      "id": "363cbee6-ed9e-4962-9bde-5a014a1e7610",
-      "name": "OpenAI Chat Model",
+      "id": "9df20456-714e-465b-bc70-5ecf85fa037b",
+      "name": "Mistral Cloud Chat Model1",
       "credentials": {
-        "openAiApi": {
-          "id": "YKD4WtYRjv5W7bw7",
-          "name": "openai(ram sir)"
+        "mistralCloudApi": {
+          "id": "OQCChbvz4RSvqeUj",
+          "name": "Mistral VCard"
         }
       }
     },
     {
       "parameters": {
-        "httpMethod": "POST",
-        "path": "244f405b-b775-4521-a50c-164e8d6fb17c",
-        "responseMode": "responseNode",
-        "options": {
-          "binaryPropertyName": "data"
-        }
-      },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [
-        40,
-        -200
-      ],
-      "id": "f75125da-0684-4b28-a454-8032abfe051c",
-      "name": "Webhook",
-      "webhookId": "244f405b-b775-4521-a50c-164e8d6fb17c"
-    },
-    {
-      "parameters": {
-        "rules": {
-          "values": [
+        "assignments": {
+          "assignments": [
             {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ Object.keys($json).includes('voice') || Object.keys($json).includes('audio') || ($binary && Object.keys($binary).length > 0) }}",
-                    "rightValue": true,
-                    "operator": {
-                      "type": "boolean",
-                      "operation": "equals"
-                    },
-                    "id": "101cc34e-3260-4b81-a53e-a92446735984"
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "voice"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "id": "c58acdcd-40f6-4763-a76d-7e2afdbf9fc6",
-                    "leftValue": "={{ Object.keys($json).includes('message') || Object.keys($json).includes('text') }}",
-                    "rightValue": true,
-                    "operator": {
-                      "type": "boolean",
-                      "operation": "equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "text"
+              "id": "f9f653bb-6cde-4121-9ce2-ad3477b9b366",
+              "name": "text",
+              "value": "={{ $json.chatInput }}",
+              "type": "string"
             }
           ]
         },
         "options": {}
       },
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3.2,
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
       "position": [
-        260,
-        -200
+        100,
+        1580
       ],
-      "id": "d887f9ba-8404-412c-9190-dbf9500af648",
-      "name": "Switch"
+      "id": "c2876792-61f1-4a66-bb4d-2d1ca6b591a9",
+      "name": "Edit Fields7"
     },
     {
       "parameters": {
-        "resource": "audio",
-        "operation": "transcribe",
-        "options": {}
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Retrieve appropriate info from the vector store",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "vcard",
+          "mode": "list",
+          "cachedResultName": "vcard"
+        },
+        "options": {
+          "pineconeNamespace": "={{ $('Chat2').item.json.headers[\"user-id\"] }}"
+        }
       },
-      "type": "@n8n/n8n-nodes-langchain.openAi",
-      "typeVersion": 1.8,
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
       "position": [
-        500,
-        -320
+        1000,
+        1600
       ],
-      "id": "09d2f80a-78e4-44f3-bccc-e44b12146556",
-      "name": "OpenAI Whisper",
+      "id": "64bcff13-cead-4b57-b7e5-796401d4ae75",
+      "name": "Pinecone Vector Store2",
       "credentials": {
-        "openAiApi": {
-          "id": "YKD4WtYRjv5W7bw7",
-          "name": "openai(ram sir)"
+        "pineconeApi": {
+          "id": "X6iqgapKK8mAEF63",
+          "name": "Pinecone VCard"
         }
       }
     },
     {
       "parameters": {
-        "sessionIdType": "customKey",
-        "sessionKey": "={{ $json.sessionId || 'default-session' }}"
+        "options": {}
       },
-      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-      "typeVersion": 1.3,
+      "type": "@n8n/n8n-nodes-langchain.embeddingsMistralCloud",
+      "typeVersion": 1,
       "position": [
-        840,
-        180
+        1000,
+        1720
       ],
-      "id": "838437f7-c7ec-4003-938f-7cb1aeace7e9",
-      "name": "Simple Memory"
+      "id": "2afa4e56-0d80-4dcb-8a92-3f678f3b4900",
+      "name": "Embeddings Mistral Cloud2",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "crS2wY6fB7kmrZ71",
+          "name": "Mistral Cloud account"
+        }
+      }
     },
     {
       "parameters": {
-        "respondWith": "json",
-        "responseBody": "={{$json.response}}",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "20439b04-97b3-4d10-a8ea-c532dcd02ecc",
+              "name": "=text",
+              "value": "={{ $json.body.message }}",
+              "type": "string"
+            },
+            {
+              "id": "06655044-9ee5-46ef-9476-5f8b3ce853e4",
+              "name": "fallback_message",
+              "value": "={{ $json.body.fallback_message || ''}}",
+              "type": "string"
+            },
+            {
+              "id": "5b1f1ff3-0f52-4bff-8f32-bc9db4ebb0f8",
+              "name": "additional_context",
+              "value": "={{ $json.body.additional_context || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "906ba2dd-768a-4257-82f7-247658981f37",
+              "name": "calendly_config",
+              "value": "={{ $json.body.calendly_config || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        100,
+        1340
+      ],
+      "id": "5e817214-5261-42ea-abf7-38cfd0e89242",
+      "name": "Edit Fields8"
+    },
+    {
+      "parameters": {
+        "content": "## Set Inputs",
+        "height": 500,
+        "width": 220,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        40,
+        1280
+      ],
+      "id": "8b6b488e-82d2-4371-ae24-154b00ae36fa",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Brain",
+        "height": 200,
+        "width": 200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        500,
+        1560
+      ],
+      "id": "372dccd7-f127-4ad9-a2b3-2d4e19cf7aba",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Vector Store Retriever",
+        "height": 360,
+        "width": 360,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        920,
+        1520
+      ],
+      "id": "40e8cf83-272e-4abb-87f3-6d9e0635fd57",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=You are a helpful VCard assistant. Your mail objective is to respond with details from your context and scheduling capabilities via Calendly integration.\nYour context comes from querying `Pinecone Vector Store2` and user's details from {{ $json.additional_context }}\n\n**CAPABILITIES**:\n1. Query details from the vector store using `Pinecone Vector Store2`.\n2. Schedule meetings using Calendly tools: `get_event_types`, `get_available_times`, `schedule_event`.\n3. Retrieve available event types, time slots, and create scheduling links.\n\n**SCHEDULING WORKFLOW**:\nWhen users request scheduling, meetings, or appointments, follow this exact process:\n1. Call `get_event_types` to retrieve available event types and their URIs.\n2. Call `get_available_times` with a clean `event_type` URI from `get_event_types` and validated `start_time` and `end_time` in ISO 8601 UTC format.\n3. Call `schedule_event` with validated parameters to create a scheduling link.\n\n**REQUIRED PARAMETERS**:\n- For `get_event_types`:\n  - `user`: Fixed to `https://api.calendly.com/users/71a67e9b-5cc4-49cf-a89f-6d3befd8e684`.\n  - `active`: Set to `true`.\n- For `get_available_times`:\n  - `event_type`: A clean URI from `get_event_types` (e.g., `https://api.calendly.com/event_types/12345`), without query parameters or modifications.\n  - `start_time`: ISO 8601 UTC format (e.g., `2025-08-21T09:00:00Z`).\n  - `end_time`: ISO 8601 UTC format, after `start_time` (e.g., `2025-08-21T17:00:00Z`).\n  - `user`: Fixed to `https://api.calendly.com/users/71a67e9b-5cc4-49cf-a89f-6d3befd8e684`.\n- For `schedule_event`:\n  - `event_type`: A clean URI from `get_event_types`.\n  - `invitee_email`: A valid email address (e.g., `john@example.com`).\n  - `invitee_name`: A person’s full name (e.g., `John Doe`).\n  - `start_time`: ISO 8601 UTC format, sourced from `get_available_times`.\n  - `timezone`: A valid timezone (e.g., `Asia/Kolkata`). Optional, defaults to `Asia/Kolkata`.\n\n**SCHEDULING EXAMPLES**:\n- \"Schedule a meeting with john@example.com tomorrow at 10 AM\" → Call `get_event_types` → Use clean URI from `collection[0].uri` → Call `get_available_times` with `start_time` as 2025-08-21T04:30:00Z (10 AM IST to UTC) and `end_time` as 2025-08-21T12:30:00Z → Call `schedule_event`.\n- \"Book a 30-minute consultation\" → Call `get_event_types` → Select 30-minute event type URI from `collection` → Call `get_available_times` → Call `schedule_event`.\n- \"Set up a call with Sarah\" → Query vector store for Sarah’s email and name → Call `get_event_types` → Call `get_available_times` → Call `schedule_event`.\n\n**IMPORTANT RULES**:\n- Always follow the tool sequence: `get_event_types` → `get_available_times` → `schedule_event`.\n- Use `GET` for `get_event_types` and `get_available_times`, and `POST` for `schedule_event`.\n- Strictly validate all parameters before calling tools:\n  - `event_type`: Must be a clean URI from `get_event_types` response (`collection[0].uri`), without query parameters, timezones, emails, or other modifications.\n  - `start_time` and `end_time`: Must be ISO 8601 UTC format (e.g., `2025-08-21T09:00:00Z`, ending with `Z`). Never use offsets (e.g., `+04:00`), URIs, or other non-date values.\n  - `invitee_email`: Must match email format (e.g., `[\\w\\.-]+@[\\w\\.-]+\\.\\w+`).\n  - `invitee_name`: Must be a person’s name, not a URI, email, or date.\n  - `timezone`: Must be a valid timezone (e.g., `Asia/Kolkata`), not a date or URI.\n- If user input is missing or invalid, prompt the user or use defaults:\n  - Default `start_time`: Tomorrow 9:00 AM UTC (`{{ $now.startOf('day').plus({ days: 1, hours: 9 }).toUTC().toISO() }}`).\n  - Default `end_time`: Tomorrow 5:00 PM UTC (`{{ $now.startOf('day').plus({ days: 1, hours: 17 }).toUTC().toISO() }}`).\n  - Default `timezone`: `Asia/Kolkata`.\n  - Default `invitee_name`: Prompt user or use \"Guest\".\n- Parse user input carefully:\n  - Extract emails using regex (e.g., `[\\w\\.-]+@[\\w\\.-]+\\.\\w+`).\n  - Convert time inputs (e.g., \"tomorrow at 10 AM\") to ISO 8601 UTC format, assuming IST (UTC+05:30) unless specified, then convert to UTC.\n  - Use `get_event_types` response (`collection[0].uri`) directly for `event_type`, without appending query parameters or other data.\n- If no availability is found, suggest alternative dates/times (e.g., next day or wider range).\n- Handle API errors (e.g., 400, 404) by:\n  - Logging error details for debugging.\n  - Prompting the user for corrected inputs (e.g., \"Please provide a valid time like 'tomorrow at 10 AM'\").\n  - Retrying with validated parameters if possible.\n- Confirm scheduling details with the user before calling `schedule_event` (e.g., \"Scheduling a meeting for john@example.com on 2025-08-21 at 10:00 AM IST (04:30 AM UTC). Is this correct?\").\n\n**CONTEXT**:\n- Today’s date and time: {{ $now }} (Timezone: IST, `Asia/Kolkata`).\n- Always use ISO 8601 UTC format for `start_time` and `end_time` in API calls (e.g., `2025-08-21T09:00:00Z`).\n- Query the Pinecone Vector Store2 for the details that you can answer. Anything that is not in the vector store, you should respond with a fallback message saying {{ $json.fallback_message || \"My Apologies, I don't have that information.\" }}\n\n**RESPONSE FORMAT**:\n- Be concise, polite, and helpful.\n- Confirm scheduling details in user’s timezone (e.g., \"I’ll schedule a meeting with john@example.com for 2025-08-21 at 10:00 AM IST (04:30 AM UTC). Is this correct?\").\n- Provide clear next steps (e.g., \"Please provide a preferred time\" or \"Here’s your scheduling link\").\n- Include the scheduling link when created.\n- If an error occurs, explain the issue and request corrected information (e.g., \"I need a valid email and time to proceed\")."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        780,
+        1300
+      ],
+      "id": "85c80f36-2797-492b-9ef7-08abdb2ae1f2",
+      "name": "VCard Agent1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chat-api",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -520,
+        1360
+      ],
+      "id": "c2642316-fe4d-4454-b395-320d3d0e93bd",
+      "name": "Chat2",
+      "webhookId": "ab827951-ba03-4da5-b68a-b0e634fefdc2"
+    },
+    {
+      "parameters": {
         "options": {}
       },
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        1560,
-        -200
+        1280,
+        1300
       ],
-      "id": "d75459c6-46fb-4a46-8543-4ba564138e5e",
-      "name": "Respond to Webhook"
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3,
-      "position": [
-        680,
-        -200
-      ],
-      "id": "c7cc0d9f-6f04-48c6-afc9-e6bdc3df71b9",
-      "name": "Merge"
+      "id": "fe4c1391-b814-4aca-be2e-82e80af17004",
+      "name": "Respond to Webhook6"
     },
     {
       "parameters": {
-        "jsCode": "// Handle voice transcription or direct text input\nconst item = $input.first();\n\n// If this is transcribed audio, format for AI Agent\nif (item.json.text && !item.json.message) {\n  return {\n    json: {\n      chatInput: item.json.text,\n      sessionId: item.json.sessionId || 'default-session',\n      inputType: 'voice'\n    }\n  };\n}\n\n// If this is direct text input, format for AI Agent  \nif (item.json.message) {\n  return {\n    json: {\n      chatInput: item.json.message,\n      sessionId: item.json.sessionId || 'default-session', \n      inputType: 'text'\n    }\n  };\n}\n\n// Fallback\nreturn {\n  json: {\n    chatInput: item.json.text || item.json.message || 'No input detected',\n    sessionId: item.json.sessionId || 'default-session',\n    inputType: 'unknown'\n  }\n};"
+        "toolDescription": "Get available time slots for scheduling meetings. Parameters: start_time (optional ISO date), end_time (optional ISO date)",
+        "url": "https://api.calendly.com/event_type_available_times",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "start_time",
+              "value": "={{ $json.start_time || $now.startOf('day').plus({ days: 1, hours: 9 }).toUTC().toISO() }}"
+            },
+            {
+              "name": "end_time",
+              "value": "={{ $json.end_time || $now.startOf('day').plus({ days: 1, hours: 17 }).toUTC().toISO() }}"
+            },
+            {
+              "name": "user",
+              "value": "https://api.calendly.com/users/71a67e9b-5cc4-49cf-a89f-6d3befd8e684"
+            },
+            {
+              "name": "event_type",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJraWQiOiIxY2UxZTEzNjE3ZGNmNzY2YjNjZWJjY2Y4ZGM1YmFmYThhNjVlNjg0MDIzZjdjMzJiZTgzNDliMjM4MDEzNWI0IiwidHlwIjoiUEFUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNzU1NjU1OTkzLCJqdGkiOiJjZmFiODk1NC00MzBjLTRhYjYtYTYzYi00MjVhMDllNDMwYWMiLCJ1c2VyX3V1aWQiOiI3MWE2N2U5Yi01Y2M0LTQ5Y2YtYTg5Zi02ZDNiZWZkOGU2ODQifQ._mQeMs6oJXOmYu0qF0AVimsyuls4JeSjVSDCo0XCW92DzNDqSTb_wBEAsJETTdIS4Z_o5duNwKS9ksucfId3wg"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
       },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
       "position": [
-        500,
-        -80
+        960,
+        1920
       ],
-      "id": "854f8c29-b875-47e7-80f1-d477f2dd1562",
-      "name": "Format Input"
+      "id": "ac2e0950-d331-417b-aeb5-97d3c73df095",
+      "name": "get_available_times"
     },
     {
       "parameters": {
-        "jsCode": "const words = $json.output.split(' ');\nconst truncated = words.slice(0,50).join(' ');\nreturn { json: { response: truncated, sessionId: $json.sessionId } };\n"
+        "toolDescription": "Get available Calendly event types for scheduling. Shows meeting types, durations, and scheduling URLs",
+        "url": "https://api.calendly.com/event_types",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "user",
+              "value": "https://api.calendly.com/users/71a67e9b-5cc4-49cf-a89f-6d3befd8e684"
+            },
+            {
+              "name": "active",
+              "value": "true"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJraWQiOiIxY2UxZTEzNjE3ZGNmNzY2YjNjZWJjY2Y4ZGM1YmFmYThhNjVlNjg0MDIzZjdjMzJiZTgzNDliMjM4MDEzNWI0IiwidHlwIjoiUEFUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNzU1NjU1OTkzLCJqdGkiOiJjZmFiODk1NC00MzBjLTRhYjYtYTYzYi00MjVhMDllNDMwYWMiLCJ1c2VyX3V1aWQiOiI3MWE2N2U5Yi01Y2M0LTQ5Y2YtYTg5Zi02ZDNiZWZkOGU2ODQifQ._mQeMs6oJXOmYu0qF0AVimsyuls4JeSjVSDCo0XCW92DzNDqSTb_wBEAsJETTdIS4Z_o5duNwKS9ksucfId3wg"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
       },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
       "position": [
-        1220,
-        -200
+        1140,
+        1920
       ],
-      "id": "b177e408-938b-4638-b081-7a7ddc26658f",
-      "name": "Code"
+      "id": "5ba9df06-e52c-4e42-90d8-1d9c5fef8d69",
+      "name": "get_event_types"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Schedule a new event with Calendly. Parameters: event_type (required), invitee_email (required), invitee_name (required), start_time (required ISO date), end_time (optional ISO date), timezone (optional), questions_and_answers (optional array)",
+        "method": "POST",
+        "url": "https://api.calendly.com/scheduling_links",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJraWQiOiIxY2UxZTEzNjE3ZGNmNzY2YjNjZWJjY2Y4ZGM1YmFmYThhNjVlNjg0MDIzZjdjMzJiZTgzNDliMjM4MDEzNWI0IiwidHlwIjoiUEFUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNzU1NjU1OTkzLCJqdGkiOiJjZmFiODk1NC00MzBjLTRhYjYtYTYzYi00MjVhMDllNDMwYWMiLCJ1c2VyX3V1aWQiOiI3MWE2N2U5Yi01Y2M0LTQ5Y2YtYTg5Zi02ZDNiZWZkOGU2ODQifQ._mQeMs6oJXOmYu0qF0AVimsyuls4JeSjVSDCo0XCW92DzNDqSTb_wBEAsJETTdIS4Z_o5duNwKS9ksucfId3wg"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_type",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            },
+            {
+              "name": "start_time",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', ``, 'string') }}"
+            },
+            {
+              "name": "invitee_email",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', ``, 'string') }}"
+            },
+            {
+              "name": "invitee_name",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            },
+            {
+              "name": "timezone",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters4_Value', ``, 'string') }}"
+            },
+            {
+              "name": "max_event_count",
+              "value": "1"
+            },
+            {
+              "name": "owner",
+              "value": "https://api.calendly.com/users/71a67e9b-5cc4-49cf-a89f-6d3befd8e684"
+            },
+            {
+              "name": "owner_type",
+              "value": "EventType"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1060,
+        2060
+      ],
+      "id": "eb0539f0-3e66-4897-971c-dbb8d7749495",
+      "name": "schedule_event"
     }
   ],
   "connections": {
-    "AI Agent": {
+    "When chat message received": {
       "main": [
         [
           {
-            "node": "Code",
+            "node": "Edit Fields7",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "OpenAI Chat Model": {
+    "Mistral Cloud Chat Model1": {
       "ai_languageModel": [
         [
           {
-            "node": "AI Agent",
+            "node": "VCard Agent1",
             "type": "ai_languageModel",
             "index": 0
           }
         ]
       ]
     },
-    "Webhook": {
+    "Edit Fields7": {
       "main": [
         [
           {
-            "node": "Switch",
+            "node": "VCard Agent1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Switch": {
-      "main": [
+    "Pinecone Vector Store2": {
+      "ai_tool": [
         [
           {
-            "node": "OpenAI Whisper",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Format Input",
-            "type": "main",
+            "node": "VCard Agent1",
+            "type": "ai_tool",
             "index": 0
           }
         ]
       ]
     },
-    "OpenAI Whisper": {
-      "main": [
+    "Embeddings Mistral Cloud2": {
+      "ai_embedding": [
         [
           {
-            "node": "Merge",
-            "type": "main",
+            "node": "Pinecone Vector Store2",
+            "type": "ai_embedding",
             "index": 0
           }
         ]
       ]
     },
-    "Simple Memory": {
-      "ai_memory": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_memory",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Merge": {
+    "Edit Fields8": {
       "main": [
         [
           {
-            "node": "AI Agent",
+            "node": "VCard Agent1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Format Input": {
+    "VCard Agent1": {
       "main": [
         [
           {
-            "node": "Merge",
+            "node": "Respond to Webhook6",
             "type": "main",
-            "index": 1
+            "index": 0
           }
         ]
       ]
     },
-    "Code": {
+    "Chat2": {
       "main": [
         [
           {
-            "node": "Respond to Webhook",
+            "node": "Edit Fields8",
             "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_available_times": {
+      "ai_tool": [
+        [
+          {
+            "node": "VCard Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_event_types": {
+      "ai_tool": [
+        [
+          {
+            "node": "VCard Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "schedule_event": {
+      "ai_tool": [
+        [
+          {
+            "node": "VCard Agent1",
+            "type": "ai_tool",
             "index": 0
           }
         ]
@@ -319,6 +541,7 @@
   },
   "pinData": {},
   "meta": {
+    "templateCredsSetupCompleted": true,
     "instanceId": "aee285e862d73f094085d9e77e030ac7335765ff95695ccc37d826237f205f75"
   }
 }
