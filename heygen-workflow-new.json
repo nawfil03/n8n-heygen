@@ -159,7 +159,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ { \"response\": $json.output || $json.text, \"sessionId\": $json.sessionId || 'default-session' } }}",
+        "responseBody": "={{$json.response}}",
         "options": {}
       },
       "type": "n8n-nodes-base.respondToWebhook",
@@ -197,7 +197,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const words = $json.response?.split(' ')||[];\nconst truncated = words.slice(0,50).join(' ');\nreturn { json:{ response:truncated, sessionId:$json.sessionId } };\n"
+        "jsCode": "const words = $json.output.split(' ');\nconst truncated = words.slice(0,50).join(' ');\nreturn { json: { response: truncated, sessionId: $json.sessionId } };\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
